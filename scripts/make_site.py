@@ -207,8 +207,9 @@ PAGE = """<!DOCTYPE html>
   let current = 'all', filtered = [], lbIndex = -1;
 
   const months = [...new Set(DATA.map(d => d.month))];
-  const chipCount = k => k === 'all' ? DATA.length : k === 'featured' ? DATA.filter(d=>d.featured).length
-    : k === 'pairs' ? DATA.filter(d=>d.thumbs.length>1).length : DATA.filter(d=>d.month===k).length;
+  const sum = arr => arr.reduce((n,d) => n + d.thumbs.length, 0);
+  const chipCount = k => k === 'all' ? sum(DATA) : k === 'featured' ? sum(DATA.filter(d=>d.featured))
+    : k === 'pairs' ? sum(DATA.filter(d=>d.thumbs.length>1)) : sum(DATA.filter(d=>d.month===k));
   const chips = [['all','All'],['featured','Featured'],['pairs','Before / after'], ...months.map(m => [m, m.replace('-',' / ')])]
     .map(([k,l]) => [k, l + '  ' + chipCount(k)]);
   chips.forEach(([key,label]) => {
