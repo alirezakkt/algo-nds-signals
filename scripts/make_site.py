@@ -102,7 +102,7 @@ PAGE = """<!DOCTYPE html>
   .tile .pair{position:absolute;top:8px;left:8px;background:var(--amber);color:#141414;font-size:10px;
     font-weight:800;padding:3px 7px;border-radius:5px;letter-spacing:.06em}
   .count{color:var(--muted);font-size:13px;margin:0 0 16px}
-  #lb{position:fixed;inset:0;background:rgba(4,6,10,.96);display:none;z-index:50;padding:28px;overflow:auto}
+  #lb{position:fixed;inset:0;background:#06080d;display:none;z-index:50;padding:28px;overflow:auto}
   #lb.open{display:block}
   #lb .inner{max-width:1080px;margin:0 auto}
   #lb img{width:100%;border-radius:10px;margin-bottom:12px;border:1px solid var(--line)}
