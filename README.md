@@ -29,6 +29,13 @@
 | [![frame](docs/thumbs/083.jpg)](archive/2025-12/2025-12-21_1454/) | [![frame](docs/thumbs/101.jpg)](archive/2026-02/2026-02-15_1238/) | [![frame](docs/thumbs/135-1.jpg)](archive/2026-06/2026-06-29_1105/) |
 | **2025‑12‑21** · TP from the next node, SL from GARCH | **2026‑02‑15** · prediction readout, live | **2026‑06‑29** · N3 signal card |
 
+| | | |
+|:--:|:--:|:--:|
+| [![frame](docs/thumbs/009.jpg)](archive/2025-10/2025-10-03_1351/) | [![frame](docs/thumbs/023.jpg)](archive/2025-10/2025-10-17_1801/) | [![frame](docs/thumbs/105.jpg)](archive/2026-02/2026-02-20_1941/) |
+| **2025‑10‑03** · "the market respects math, not drawings" | **2025‑10‑17** · sequence geometry projected forward | **2026‑02‑20** · NMT Algo visual layer |
+
+### [**+ 193 more frames in the live gallery →**](https://alirezakkt.github.io/algo-nds-signals/#gallery)
+
 </div>
 
 ---

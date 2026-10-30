@@ -22,8 +22,8 @@ FEATURED = {
     "2025-12-21_1454", "2026-02-15_1238", "2026-02-20_1941", "2026-06-29_1105",
 }
 
-THUMB_W = 460
-THUMB_Q = 78
+THUMB_W = 640
+THUMB_Q = 80
 THUMBS = os.path.join("docs", "thumbs")
 
 
@@ -207,7 +207,10 @@ PAGE = """<!DOCTYPE html>
   let current = 'all', filtered = [], lbIndex = -1;
 
   const months = [...new Set(DATA.map(d => d.month))];
-  const chips = [['all','All'],['featured','Featured'],['pairs','Before / after'], ...months.map(m => [m, m.replace('-',' / ')])];
+  const chipCount = k => k === 'all' ? DATA.length : k === 'featured' ? DATA.filter(d=>d.featured).length
+    : k === 'pairs' ? DATA.filter(d=>d.thumbs.length>1).length : DATA.filter(d=>d.month===k).length;
+  const chips = [['all','All'],['featured','Featured'],['pairs','Before / after'], ...months.map(m => [m, m.replace('-',' / ')])]
+    .map(([k,l]) => [k, l + '  ' + chipCount(k)]);
   chips.forEach(([key,label]) => {
     const b = document.createElement('button');
     b.className = 'chip' + (key === 'all' ? ' on' : '');
@@ -239,8 +242,9 @@ PAGE = """<!DOCTYPE html>
 
   function openLightbox(i){
     lbIndex = i; const d = filtered[i];
-    document.getElementById('lb-cap').textContent = d.date + ' ' + d.time + (d.caption ? ' — ' + d.caption : '');
-    document.getElementById('lb-body').innerHTML = d.thumbs.map(s => '<img src="' + s + '" alt="">').join('');
+    document.getElementById('lb-cap').innerHTML = d.date + ' ' + d.time + (d.caption ? ' — ' + d.caption : '') +
+      ' · <a href="' + d.full[0] + '" target="_blank" rel="noopener">open full size ↗</a>';
+    document.getElementById('lb-body').innerHTML = d.full.map(s => '<img loading="eager" src="' + s + '" alt="">').join('');
     document.getElementById('lb').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -281,6 +285,7 @@ def main():
             "symbol": "",
             "folder": shot["folder"],
             "images": shot["images"],
+            "full": [os.path.join(shot["folder"], img) for img in shot["images"]],
             "featured": shot["folder"].split("/")[-1] in FEATURED,
         })
 
