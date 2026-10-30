@@ -102,6 +102,16 @@ PAGE = """<!DOCTYPE html>
   .tile .pair{position:absolute;top:8px;left:8px;background:var(--amber);color:#141414;font-size:10px;
     font-weight:800;padding:3px 7px;border-radius:5px;letter-spacing:.06em}
   .count{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .grid.cases{grid-template-columns:repeat(auto-fill,minmax(430px,1fr));gap:16px}
+  .case{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;cursor:zoom-in;transition:border-color .15s}
+  .case:hover{border-color:var(--cyan)}
+  .case-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+  .case-head b{font-size:14px}
+  .case-head span{color:var(--muted);font-size:12px}
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .strip img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:6px;display:block}
+  .more{display:flex;align-items:center;justify-content:center;background:#0b0e14;
+    border:1px dashed var(--line);border-radius:6px;color:var(--muted);font-size:13px}
   #lb{position:fixed;inset:0;background:#06080d;display:none;z-index:50;padding:28px;overflow:auto}
   #lb.open{display:block}
   #lb .inner{max-width:1080px;margin:0 auto}
@@ -204,27 +214,40 @@ PAGE = """<!DOCTYPE html>
   const grid = document.getElementById('grid');
   const filters = document.getElementById('filters');
   const shown = document.getElementById('shown');
-  let current = 'all', filtered = [], lbIndex = -1;
+  let current = 'sessions', filtered = [], lbIndex = -1, lbStep = null;
+  const SESSIONS = __SESSIONS__;
 
   const months = [...new Set(DATA.map(d => d.month))];
   const sum = arr => arr.reduce((n,d) => n + d.thumbs.length, 0);
-  const chipCount = k => k === 'all' ? sum(DATA) : k === 'featured' ? sum(DATA.filter(d=>d.featured))
-    : k === 'pairs' ? sum(DATA.filter(d=>d.thumbs.length>1)) : sum(DATA.filter(d=>d.month===k));
-  const chips = [['all','All'],['featured','Featured'],['pairs','Before / after'], ...months.map(m => [m, m.replace('-',' / ')])]
+  const multi = SESSIONS.length;
+  const chipCount = k => k === 'sessions' ? multi
+    : k === 'all' ? sum(DATA)
+    : k === 'featured' ? sum(DATA.filter(d=>d.featured))
+    : sum(DATA.filter(d=>d.month===k));
+  const chips = [['sessions','Sessions'],['all','All charts'],['featured','Featured'],
+                 ...months.map(m => [m, m.replace('-',' / ')])]
     .map(([k,l]) => [k, l + '  ' + chipCount(k)]);
+
   chips.forEach(([key,label]) => {
     const b = document.createElement('button');
-    b.className = 'chip' + (key === 'all' ? ' on' : '');
+    b.className = 'chip' + (key === current ? ' on' : '');
     b.textContent = label;
     b.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
       b.classList.add('on'); current = key; render(); };
     filters.appendChild(b);
   });
 
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function humanDate(iso){
+    const [y,m,d] = iso.split('-');
+    return (+d) + ' ' + MON[+m - 1] + ' ' + y;
+  }
+
   function render(){
     grid.innerHTML = '';
+    if (current === 'sessions') { renderSessions(); return; }
+    grid.className = 'grid';
     filtered = DATA.filter(d => current === 'all' ? true
-      : current === 'pairs' ? d.thumbs.length > 1
       : current === 'featured' ? d.featured
       : d.month === current);
     shown.textContent = filtered.reduce((n,d) => n + d.thumbs.length, 0);
@@ -235,22 +258,57 @@ PAGE = """<!DOCTYPE html>
       t.innerHTML = '<img loading="lazy" src="' + d.thumbs[0] + '" alt="">' +
         (d.thumbs.length > 1 ? '<span class="pair">PAIR</span>' : '') +
         '<div class="meta"><span>' + d.date + ' · ' + d.time + '</span><span>' + (d.symbol || '') + '</span></div>';
-      t.onclick = () => openLightbox(i);
+      t.onclick = () => openCard(i);
       frag.appendChild(t);
     });
     grid.appendChild(frag);
   }
 
-  function openLightbox(i){
-    lbIndex = i; const d = filtered[i];
-    document.getElementById('lb-cap').innerHTML = d.date + ' ' + d.time + (d.caption ? ' — ' + d.caption : '') +
-      ' · <a href="' + d.full[0] + '" target="_blank" rel="noopener">open full size ↗</a>';
-    document.getElementById('lb-body').innerHTML = d.full.map(s => '<img loading="eager" src="' + s + '" alt="">').join('');
+  function renderSessions(){
+    grid.className = 'grid cases';
+    shown.textContent = SESSIONS.reduce((n,s) => n + s.frames, 0);
+    const frag = document.createDocumentFragment();
+    SESSIONS.forEach((s, idx) => {
+      const el = document.createElement('div');
+      el.className = 'case';
+      const visible = Math.min(s.thumbs.length, 4);
+      const shownImages = s.thumbs.length > 4 ? 3 : s.thumbs.length;
+      const strip = s.thumbs.slice(0, shownImages).map(t => '<img loading="lazy" src="' + t + '" alt="">').join('');
+      const extra = s.thumbs.length > 4 ? '<div class="more">+' + (s.thumbs.length - shownImages) + '</div>' : '';
+      const cols = 'style="grid-template-columns:repeat(' + visible + ',1fr)"';
+      el.innerHTML = '<div class="case-head"><b>' + humanDate(s.date) + '</b><span>' + s.frames +
+        ' frames · ' + s.start.slice(11,16) + ' → ' + s.end.slice(11,16) +
+        (s.symbols.length ? ' · ' + s.symbols.join(', ') : '') + '</span></div>' +
+        '<div class="strip" ' + cols + '>' + strip + extra + '</div>';
+      el.onclick = () => openSession(idx);
+      frag.appendChild(el);
+    });
+    grid.appendChild(frag);
+  }
+
+  function showImages(urls, captionHtml){
+    document.getElementById('lb-cap').innerHTML = captionHtml +
+      ' · <a href="' + urls[0] + '" target="_blank" rel="noopener">open full size ↗</a>';
+    document.getElementById('lb-body').innerHTML = urls.map(u => '<img loading="eager" src="' + u + '" alt="">').join('');
     document.getElementById('lb').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
+
+  function openCard(i){
+    lbIndex = i; const d = filtered[i];
+    showImages(d.full, d.date + ' ' + d.time + (d.caption ? ' — ' + d.caption : ''));
+    lbStep = n => { lbIndex = (lbIndex + n + filtered.length) % filtered.length; openCard(lbIndex); };
+  }
+
+  function openSession(idx){
+    const s = SESSIONS[idx];
+    showImages(s.full, humanDate(s.date) + ' · ' + s.frames + ' frames · ' +
+      s.start.slice(11,16) + ' → ' + s.end.slice(11,16));
+    lbStep = n => { const next = (idx + n + SESSIONS.length) % SESSIONS.length; openSession(next); };
+  }
+
   function close(){ document.getElementById('lb').classList.remove('open'); document.body.style.overflow = ''; }
-  function step(n){ if(!filtered.length) return; lbIndex = (lbIndex + n + filtered.length) % filtered.length; openLightbox(lbIndex); }
+  function step(n){ if (lbStep) lbStep(n); }
 
   document.getElementById('lb-close').onclick = close;
   document.getElementById('lb-prev').onclick = () => step(-1);
@@ -292,6 +350,33 @@ def main():
 
     make_thumbs(slim)
 
+    # sessions: the frames that belong to one day's work (see scripts/link_images.py)
+    try:
+        linked = json.load(open("data/threads.json", encoding="utf-8"))
+    except FileNotFoundError:
+        linked = {"threads": []}
+    by_folder = {entry["folder"]: entry for entry in slim}
+    sessions = []
+    for thread in linked["threads"]:
+        if thread["frames"] < 2:
+            continue
+        thumbs, full = [], []
+        for folder in thread["posts"]:
+            entry = by_folder.get(folder)
+            if not entry:
+                continue
+            thumbs += entry["thumbs"]
+            full += entry["full"]
+        sessions.append({
+            "date": thread["date"],
+            "frames": thread["frames"],
+            "start": thread["start"],
+            "end": thread["end"],
+            "symbols": thread.get("symbols", []),
+            "thumbs": thumbs,
+            "full": full,
+        })
+
     total = sum(len(s["thumbs"]) for s in slim)
     stats = [
         (str(total), "charts archived"),
@@ -319,6 +404,7 @@ def main():
     page = (PAGE.replace("__STATS__", stats_html)
                 .replace("__SIGNALS__", "".join(rows))
                 .replace("__COUNT__", str(total))
+                .replace("__SESSIONS__", json.dumps(sessions, ensure_ascii=False))
                 .replace("__DATA__", json.dumps(slim, ensure_ascii=False)))
 
     with open("index.html", "w", encoding="utf-8") as fh:

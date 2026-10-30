@@ -52,6 +52,16 @@
   .tile .pair{position:absolute;top:8px;left:8px;background:var(--amber);color:#141414;font-size:10px;
     font-weight:800;padding:3px 7px;border-radius:5px;letter-spacing:.06em}
   .count{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .grid.cases{grid-template-columns:repeat(auto-fill,minmax(430px,1fr));gap:16px}
+  .case{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;cursor:zoom-in;transition:border-color .15s}
+  .case:hover{border-color:var(--cyan)}
+  .case-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+  .case-head b{font-size:14px}
+  .case-head span{color:var(--muted);font-size:12px}
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+  .strip img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:6px;display:block}
+  .more{display:flex;align-items:center;justify-content:center;background:#0b0e14;
+    border:1px dashed var(--line);border-radius:6px;color:var(--muted);font-size:13px}
   #lb{position:fixed;inset:0;background:#06080d;display:none;z-index:50;padding:28px;overflow:auto}
   #lb.open{display:block}
   #lb .inner{max-width:1080px;margin:0 auto}
@@ -154,27 +164,40 @@
   const grid = document.getElementById('grid');
   const filters = document.getElementById('filters');
   const shown = document.getElementById('shown');
-  let current = 'all', filtered = [], lbIndex = -1;
+  let current = 'sessions', filtered = [], lbIndex = -1, lbStep = null;
+  const SESSIONS = [{"date": "2025-10-01", "frames": 4, "start": "2025-10-01T10:50:32", "end": "2025-10-01T16:35:53", "symbols": [], "thumbs": ["docs/thumbs/002.jpg", "docs/thumbs/003.jpg", "docs/thumbs/004.jpg", "docs/thumbs/005.jpg"], "full": ["archive/2025-10/2025-10-01_1050/01.jpg", "archive/2025-10/2025-10-01_1143/01.jpg", "archive/2025-10/2025-10-01_1555/01.jpg", "archive/2025-10/2025-10-01_1635/01.jpg"]}, {"date": "2025-10-02", "frames": 2, "start": "2025-10-02T15:25:27", "end": "2025-10-02T15:40:27", "symbols": [], "thumbs": ["docs/thumbs/006.jpg", "docs/thumbs/007.jpg"], "full": ["archive/2025-10/2025-10-02_1525/01.jpg", "archive/2025-10/2025-10-02_1540/01.jpg"]}, {"date": "2025-10-03", "frames": 3, "start": "2025-10-03T02:19:16", "end": "2025-10-03T17:39:52", "symbols": [], "thumbs": ["docs/thumbs/008.jpg", "docs/thumbs/009.jpg", "docs/thumbs/010.jpg"], "full": ["archive/2025-10/2025-10-03_0219/01.jpg", "archive/2025-10/2025-10-03_1351/01.jpg", "archive/2025-10/2025-10-03_1739/01.jpg"]}, {"date": "2025-10-08", "frames": 4, "start": "2025-10-08T11:48:01", "end": "2025-10-08T21:50:29", "symbols": ["EURUSD"], "thumbs": ["docs/thumbs/012.jpg", "docs/thumbs/013.jpg", "docs/thumbs/014.jpg", "docs/thumbs/015.jpg"], "full": ["archive/2025-10/2025-10-08_1148/01.jpg", "archive/2025-10/2025-10-08_1517/01.jpg", "archive/2025-10/2025-10-08_1523/01.jpg", "archive/2025-10/2025-10-08_2150/01.jpg"]}, {"date": "2025-10-09", "frames": 3, "start": "2025-10-09T13:37:35", "end": "2025-10-09T20:58:45", "symbols": [], "thumbs": ["docs/thumbs/016.jpg", "docs/thumbs/017.jpg", "docs/thumbs/018.jpg"], "full": ["archive/2025-10/2025-10-09_1337/01.jpg", "archive/2025-10/2025-10-09_1742/01.jpg", "archive/2025-10/2025-10-09_2058/01.jpg"]}, {"date": "2025-10-17", "frames": 3, "start": "2025-10-17T14:06:16", "end": "2025-10-17T18:01:19", "symbols": [], "thumbs": ["docs/thumbs/021.jpg", "docs/thumbs/022.jpg", "docs/thumbs/023.jpg"], "full": ["archive/2025-10/2025-10-17_1406/01.jpg", "archive/2025-10/2025-10-17_1629/01.jpg", "archive/2025-10/2025-10-17_1801/01.jpg"]}, {"date": "2025-10-18", "frames": 2, "start": "2025-10-18T16:28:15", "end": "2025-10-18T16:33:11", "symbols": [], "thumbs": ["docs/thumbs/024.jpg", "docs/thumbs/025.jpg"], "full": ["archive/2025-10/2025-10-18_1628/01.jpg", "archive/2025-10/2025-10-18_1633/01.jpg"]}, {"date": "2025-10-19", "frames": 7, "start": "2025-10-19T09:48:28", "end": "2025-10-19T23:17:37", "symbols": [], "thumbs": ["docs/thumbs/026.jpg", "docs/thumbs/027.jpg", "docs/thumbs/028.jpg", "docs/thumbs/029.jpg", "docs/thumbs/030.jpg", "docs/thumbs/031.jpg", "docs/thumbs/032.jpg"], "full": ["archive/2025-10/2025-10-19_0948/01.jpg", "archive/2025-10/2025-10-19_1057/01.jpg", "archive/2025-10/2025-10-19_1257/01.jpg", "archive/2025-10/2025-10-19_2051/01.jpg", "archive/2025-10/2025-10-19_2257/01.jpg", "archive/2025-10/2025-10-19_2258/01.jpg", "archive/2025-10/2025-10-19_2317/01.jpg"]}, {"date": "2025-10-21", "frames": 2, "start": "2025-10-21T12:06:16", "end": "2025-10-21T13:48:57", "symbols": [], "thumbs": ["docs/thumbs/034.jpg", "docs/thumbs/035.jpg"], "full": ["archive/2025-10/2025-10-21_1206/01.jpg", "archive/2025-10/2025-10-21_1348/01.jpg"]}, {"date": "2025-10-24", "frames": 6, "start": "2025-10-24T11:22:58", "end": "2025-10-24T16:06:02", "symbols": [], "thumbs": ["docs/thumbs/037.jpg", "docs/thumbs/038.jpg", "docs/thumbs/039.jpg", "docs/thumbs/040.jpg", "docs/thumbs/041.jpg", "docs/thumbs/042.jpg"], "full": ["archive/2025-10/2025-10-24_1122/01.jpg", "archive/2025-10/2025-10-24_1123/01.jpg", "archive/2025-10/2025-10-24_1531/01.jpg", "archive/2025-10/2025-10-24_1544/01.jpg", "archive/2025-10/2025-10-24_1555/01.jpg", "archive/2025-10/2025-10-24_1606/01.jpg"]}, {"date": "2025-10-27", "frames": 5, "start": "2025-10-27T10:46:08", "end": "2025-10-27T22:52:00", "symbols": [], "thumbs": ["docs/thumbs/043.jpg", "docs/thumbs/044.jpg", "docs/thumbs/045.jpg", "docs/thumbs/046.jpg", "docs/thumbs/047.jpg"], "full": ["archive/2025-10/2025-10-27_1046/01.jpg", "archive/2025-10/2025-10-27_1201/01.jpg", "archive/2025-10/2025-10-27_1205/01.jpg", "archive/2025-10/2025-10-27_1419/01.jpg", "archive/2025-10/2025-10-27_2252/01.jpg"]}, {"date": "2025-10-28", "frames": 3, "start": "2025-10-28T11:18:05", "end": "2025-10-28T18:48:40", "symbols": [], "thumbs": ["docs/thumbs/048.jpg", "docs/thumbs/049.jpg", "docs/thumbs/050.jpg"], "full": ["archive/2025-10/2025-10-28_1118/01.jpg", "archive/2025-10/2025-10-28_1259/01.jpg", "archive/2025-10/2025-10-28_1848/01.jpg"]}, {"date": "2025-10-29", "frames": 2, "start": "2025-10-29T10:20:06", "end": "2025-10-29T19:15:32", "symbols": [], "thumbs": ["docs/thumbs/051.jpg", "docs/thumbs/052.jpg"], "full": ["archive/2025-10/2025-10-29_1020/01.jpg", "archive/2025-10/2025-10-29_1915/01.jpg"]}, {"date": "2025-11-04", "frames": 2, "start": "2025-11-04T21:46:20", "end": "2025-11-04T21:54:30", "symbols": [], "thumbs": ["docs/thumbs/054.jpg", "docs/thumbs/055.jpg"], "full": ["archive/2025-11/2025-11-04_2146/01.jpg", "archive/2025-11/2025-11-04_2154/01.jpg"]}, {"date": "2025-11-09", "frames": 2, "start": "2025-11-09T16:29:25", "end": "2025-11-09T16:37:09", "symbols": [], "thumbs": ["docs/thumbs/056.jpg", "docs/thumbs/057.jpg"], "full": ["archive/2025-11/2025-11-09_1629/01.jpg", "archive/2025-11/2025-11-09_1637/01.jpg"]}, {"date": "2025-11-11", "frames": 4, "start": "2025-11-11T16:26:35", "end": "2025-11-11T19:13:04", "symbols": ["TSLA"], "thumbs": ["docs/thumbs/058.jpg", "docs/thumbs/059.jpg", "docs/thumbs/060.jpg", "docs/thumbs/061.jpg"], "full": ["archive/2025-11/2025-11-11_1626/01.jpg", "archive/2025-11/2025-11-11_1755/01.jpg", "archive/2025-11/2025-11-11_1859/01.jpg", "archive/2025-11/2025-11-11_1913/01.jpg"]}, {"date": "2025-11-12", "frames": 3, "start": "2025-11-12T15:51:39", "end": "2025-11-12T18:37:01", "symbols": [], "thumbs": ["docs/thumbs/062.jpg", "docs/thumbs/063.jpg", "docs/thumbs/064.jpg"], "full": ["archive/2025-11/2025-11-12_1551/01.jpg", "archive/2025-11/2025-11-12_1600/01.jpg", "archive/2025-11/2025-11-12_1837/01.jpg"]}, {"date": "2025-11-13", "frames": 2, "start": "2025-11-13T15:54:43", "end": "2025-11-13T16:24:38", "symbols": [], "thumbs": ["docs/thumbs/065.jpg", "docs/thumbs/066.jpg"], "full": ["archive/2025-11/2025-11-13_1554/01.jpg", "archive/2025-11/2025-11-13_1624/01.jpg"]}, {"date": "2025-11-14", "frames": 2, "start": "2025-11-14T15:33:12", "end": "2025-11-14T22:16:23", "symbols": [], "thumbs": ["docs/thumbs/067.jpg", "docs/thumbs/068.jpg"], "full": ["archive/2025-11/2025-11-14_1533/01.jpg", "archive/2025-11/2025-11-14_2216/01.jpg"]}, {"date": "2025-11-29", "frames": 2, "start": "2025-11-29T11:24:12", "end": "2025-11-29T23:58:31", "symbols": [], "thumbs": ["docs/thumbs/070.jpg", "docs/thumbs/071.jpg"], "full": ["archive/2025-11/2025-11-29_1124/01.jpg", "archive/2025-11/2025-11-29_2358/01.jpg"]}, {"date": "2025-11-30", "frames": 3, "start": "2025-11-30T12:46:38", "end": "2025-11-30T20:41:41", "symbols": [], "thumbs": ["docs/thumbs/072.jpg", "docs/thumbs/073-1.jpg", "docs/thumbs/073-2.jpg"], "full": ["archive/2025-11/2025-11-30_1246/01.jpg", "archive/2025-11/2025-11-30_2041/01.jpg", "archive/2025-11/2025-11-30_2041/02.jpg"]}, {"date": "2025-12-13", "frames": 6, "start": "2025-12-13T15:25:37", "end": "2025-12-13T22:02:46", "symbols": [], "thumbs": ["docs/thumbs/075.jpg", "docs/thumbs/076.jpg", "docs/thumbs/077.jpg", "docs/thumbs/078.jpg", "docs/thumbs/079-1.jpg", "docs/thumbs/079-2.jpg"], "full": ["archive/2025-12/2025-12-13_1525/01.jpg", "archive/2025-12/2025-12-13_1530/01.jpg", "archive/2025-12/2025-12-13_1553/01.jpg", "archive/2025-12/2025-12-13_1555/01.jpg", "archive/2025-12/2025-12-13_2202/01.jpg", "archive/2025-12/2025-12-13_2202/02.jpg"]}, {"date": "2025-12-21", "frames": 6, "start": "2025-12-21T07:59:59", "end": "2025-12-21T22:54:50", "symbols": [], "thumbs": ["docs/thumbs/081.jpg", "docs/thumbs/082-1.jpg", "docs/thumbs/082-2.jpg", "docs/thumbs/083.jpg", "docs/thumbs/084.jpg", "docs/thumbs/085.jpg"], "full": ["archive/2025-12/2025-12-21_0759/01.jpg", "archive/2025-12/2025-12-21_1135/01.jpg", "archive/2025-12/2025-12-21_1135/02.jpg", "archive/2025-12/2025-12-21_1454/01.jpg", "archive/2025-12/2025-12-21_1932/01.jpg", "archive/2025-12/2025-12-21_2254/01.jpg"]}, {"date": "2026-01-01", "frames": 3, "start": "2026-01-01T15:24:53", "end": "2026-01-01T22:51:57", "symbols": [], "thumbs": ["docs/thumbs/087-1.jpg", "docs/thumbs/087-2.jpg", "docs/thumbs/088.jpg"], "full": ["archive/2026-01/2026-01-01_1524/01.jpg", "archive/2026-01/2026-01-01_1524/02.jpg", "archive/2026-01/2026-01-01_2251/01.jpg"]}, {"date": "2026-01-06", "frames": 2, "start": "2026-01-06T13:02:53", "end": "2026-01-06T13:02:53", "symbols": [], "thumbs": ["docs/thumbs/089-1.jpg", "docs/thumbs/089-2.jpg"], "full": ["archive/2026-01/2026-01-06_1302/01.jpg", "archive/2026-01/2026-01-06_1302/02.jpg"]}, {"date": "2026-02-10", "frames": 10, "start": "2026-02-10T18:49:38", "end": "2026-02-10T22:37:34", "symbols": ["BTC"], "thumbs": ["docs/thumbs/091-1.jpg", "docs/thumbs/091-2.jpg", "docs/thumbs/091-3.jpg", "docs/thumbs/091-4.jpg", "docs/thumbs/092.jpg", "docs/thumbs/093.jpg", "docs/thumbs/094.jpg", "docs/thumbs/095.jpg", "docs/thumbs/096.jpg", "docs/thumbs/097.jpg"], "full": ["archive/2026-02/2026-02-10_1849/01.jpg", "archive/2026-02/2026-02-10_1849/02.jpg", "archive/2026-02/2026-02-10_1849/03.jpg", "archive/2026-02/2026-02-10_1849/04.jpg", "archive/2026-02/2026-02-10_1850/01.jpg", "archive/2026-02/2026-02-10_1852/01.jpg", "archive/2026-02/2026-02-10_1933/01.jpg", "archive/2026-02/2026-02-10_1951/01.jpg", "archive/2026-02/2026-02-10_2213/01.jpg", "archive/2026-02/2026-02-10_2237/01.jpg"]}, {"date": "2026-02-15", "frames": 4, "start": "2026-02-15T12:38:43", "end": "2026-02-15T22:18:00", "symbols": [], "thumbs": ["docs/thumbs/101.jpg", "docs/thumbs/102.jpg", "docs/thumbs/103.jpg", "docs/thumbs/104.jpg"], "full": ["archive/2026-02/2026-02-15_1238/01.jpg", "archive/2026-02/2026-02-15_1308/01.jpg", "archive/2026-02/2026-02-15_1342/01.jpg", "archive/2026-02/2026-02-15_2218/01.jpg"]}, {"date": "2026-02-24", "frames": 4, "start": "2026-02-24T13:33:41", "end": "2026-02-24T21:36:13", "symbols": [], "thumbs": ["docs/thumbs/107.jpg", "docs/thumbs/108-1.jpg", "docs/thumbs/108-2.jpg", "docs/thumbs/108-3.jpg"], "full": ["archive/2026-02/2026-02-24_1333/01.jpg", "archive/2026-02/2026-02-24_2136/01.jpg", "archive/2026-02/2026-02-24_2136/02.jpg", "archive/2026-02/2026-02-24_2136/03.jpg"]}, {"date": "2026-02-25", "frames": 2, "start": "2026-02-25T17:04:48", "end": "2026-02-25T21:39:25", "symbols": ["DOW"], "thumbs": ["docs/thumbs/110.jpg", "docs/thumbs/111.jpg"], "full": ["archive/2026-02/2026-02-25_1704/01.jpg", "archive/2026-02/2026-02-25_2139/01.jpg"]}, {"date": "2026-02-26", "frames": 4, "start": "2026-02-26T16:39:44", "end": "2026-02-26T19:05:03", "symbols": [], "thumbs": ["docs/thumbs/112.jpg", "docs/thumbs/113.jpg", "docs/thumbs/114.jpg", "docs/thumbs/115.jpg"], "full": ["archive/2026-02/2026-02-26_1639/01.jpg", "archive/2026-02/2026-02-26_1824/01.jpg", "archive/2026-02/2026-02-26_1831/01.jpg", "archive/2026-02/2026-02-26_1905/01.jpg"]}, {"date": "2026-02-27", "frames": 3, "start": "2026-02-27T16:56:50", "end": "2026-02-27T23:29:56", "symbols": ["XAU"], "thumbs": ["docs/thumbs/116.jpg", "docs/thumbs/117.jpg", "docs/thumbs/118.jpg"], "full": ["archive/2026-02/2026-02-27_1656/01.jpg", "archive/2026-02/2026-02-27_1717/01.jpg", "archive/2026-02/2026-02-27_2329/01.jpg"]}, {"date": "2026-06-03", "frames": 2, "start": "2026-06-03T12:03:44", "end": "2026-06-03T16:46:23", "symbols": [], "thumbs": ["docs/thumbs/119.jpg", "docs/thumbs/120.jpg"], "full": ["archive/2026-06/2026-06-03_1203/01.jpg", "archive/2026-06/2026-06-03_1646/01.jpg"]}, {"date": "2026-06-05", "frames": 8, "start": "2026-06-05T19:51:22", "end": "2026-06-05T23:11:12", "symbols": [], "thumbs": ["docs/thumbs/122-1.jpg", "docs/thumbs/122-2.jpg", "docs/thumbs/123-1.jpg", "docs/thumbs/123-2.jpg", "docs/thumbs/124-1.jpg", "docs/thumbs/124-2.jpg", "docs/thumbs/125-1.jpg", "docs/thumbs/125-2.jpg"], "full": ["archive/2026-06/2026-06-05_1951/01.jpg", "archive/2026-06/2026-06-05_1951/02.jpg", "archive/2026-06/2026-06-05_1955/01.jpg", "archive/2026-06/2026-06-05_1955/02.jpg", "archive/2026-06/2026-06-05_2308/01.jpg", "archive/2026-06/2026-06-05_2308/02.jpg", "archive/2026-06/2026-06-05_2311/01.jpg", "archive/2026-06/2026-06-05_2311/02.jpg"]}, {"date": "2026-06-06", "frames": 2, "start": "2026-06-06T10:55:43", "end": "2026-06-06T10:55:43", "symbols": [], "thumbs": ["docs/thumbs/126-1.jpg", "docs/thumbs/126-2.jpg"], "full": ["archive/2026-06/2026-06-06_1055/01.jpg", "archive/2026-06/2026-06-06_1055/02.jpg"]}, {"date": "2026-06-08", "frames": 6, "start": "2026-06-08T15:01:20", "end": "2026-06-08T21:54:33", "symbols": [], "thumbs": ["docs/thumbs/127-1.jpg", "docs/thumbs/127-2.jpg", "docs/thumbs/128-1.jpg", "docs/thumbs/128-2.jpg", "docs/thumbs/129-1.jpg", "docs/thumbs/129-2.jpg"], "full": ["archive/2026-06/2026-06-08_1501/01.jpg", "archive/2026-06/2026-06-08_1501/02.jpg", "archive/2026-06/2026-06-08_1733/01.jpg", "archive/2026-06/2026-06-08_1733/02.jpg", "archive/2026-06/2026-06-08_2154/01.jpg", "archive/2026-06/2026-06-08_2154/02.jpg"]}, {"date": "2026-06-22", "frames": 4, "start": "2026-06-22T23:39:41", "end": "2026-06-22T23:41:57", "symbols": [], "thumbs": ["docs/thumbs/130-1.jpg", "docs/thumbs/130-2.jpg", "docs/thumbs/131-1.jpg", "docs/thumbs/131-2.jpg"], "full": ["archive/2026-06/2026-06-22_2339/01.jpg", "archive/2026-06/2026-06-22_2339/02.jpg", "archive/2026-06/2026-06-22_2341/01.jpg", "archive/2026-06/2026-06-22_2341/02.jpg"]}, {"date": "2026-06-26", "frames": 3, "start": "2026-06-26T21:39:47", "end": "2026-06-26T22:03:53", "symbols": [], "thumbs": ["docs/thumbs/133.jpg", "docs/thumbs/134-1.jpg", "docs/thumbs/134-2.jpg"], "full": ["archive/2026-06/2026-06-26_2139/01.jpg", "archive/2026-06/2026-06-26_2203/01.jpg", "archive/2026-06/2026-06-26_2203/02.jpg"]}, {"date": "2026-06-29", "frames": 2, "start": "2026-06-29T11:05:09", "end": "2026-06-29T11:05:09", "symbols": [], "thumbs": ["docs/thumbs/135-1.jpg", "docs/thumbs/135-2.jpg"], "full": ["archive/2026-06/2026-06-29_1105/01.jpg", "archive/2026-06/2026-06-29_1105/02.jpg"]}, {"date": "2026-06-30", "frames": 4, "start": "2026-06-30T16:32:24", "end": "2026-06-30T17:40:16", "symbols": ["GBPUSD"], "thumbs": ["docs/thumbs/136-1.jpg", "docs/thumbs/136-2.jpg", "docs/thumbs/137.jpg", "docs/thumbs/138.jpg"], "full": ["archive/2026-06/2026-06-30_1632/01.jpg", "archive/2026-06/2026-06-30_1632/02.jpg", "archive/2026-06/2026-06-30_1721/01.jpg", "archive/2026-06/2026-06-30_1740/01.jpg"]}, {"date": "2026-07-02", "frames": 2, "start": "2026-07-02T19:18:24", "end": "2026-07-02T19:18:24", "symbols": [], "thumbs": ["docs/thumbs/140-1.jpg", "docs/thumbs/140-2.jpg"], "full": ["archive/2026-07/2026-07-02_1918/01.jpg", "archive/2026-07/2026-07-02_1918/02.jpg"]}, {"date": "2026-07-08", "frames": 2, "start": "2026-07-08T16:19:34", "end": "2026-07-08T17:36:28", "symbols": ["US30"], "thumbs": ["docs/thumbs/141.jpg", "docs/thumbs/142.jpg"], "full": ["archive/2026-07/2026-07-08_1619/01.jpg", "archive/2026-07/2026-07-08_1736/01.jpg"]}, {"date": "2026-07-13", "frames": 2, "start": "2026-07-13T18:56:01", "end": "2026-07-13T18:57:14", "symbols": [], "thumbs": ["docs/thumbs/145.jpg", "docs/thumbs/146.jpg"], "full": ["archive/2026-07/2026-07-13_1856/01.jpg", "archive/2026-07/2026-07-13_1857/01.jpg"]}, {"date": "2026-09-08", "frames": 6, "start": "2026-09-08T18:19:03", "end": "2026-09-08T23:22:32", "symbols": [], "thumbs": ["docs/thumbs/149-1.jpg", "docs/thumbs/149-2.jpg", "docs/thumbs/150.jpg", "docs/thumbs/151.jpg", "docs/thumbs/152.jpg", "docs/thumbs/153.jpg"], "full": ["archive/2026-09/2026-09-08_1819/01.jpg", "archive/2026-09/2026-09-08_1819/02.jpg", "archive/2026-09/2026-09-08_1833/01.jpg", "archive/2026-09/2026-09-08_2229/01.jpg", "archive/2026-09/2026-09-08_2304/01.jpg", "archive/2026-09/2026-09-08_2322/01.jpg"]}, {"date": "2026-10-13", "frames": 2, "start": "2026-10-13T10:43:55", "end": "2026-10-13T10:44:04", "symbols": [], "thumbs": ["docs/thumbs/157.jpg", "docs/thumbs/158.jpg"], "full": ["archive/2026-10/2026-10-13_1043/01.jpg", "archive/2026-10/2026-10-13_1044/01.jpg"]}, {"date": "2026-10-14", "frames": 2, "start": "2026-10-14T18:11:20", "end": "2026-10-14T18:20:03", "symbols": [], "thumbs": ["docs/thumbs/159.jpg", "docs/thumbs/160.jpg"], "full": ["archive/2026-10/2026-10-14_1811/01.jpg", "archive/2026-10/2026-10-14_1820/01.jpg"]}, {"date": "2026-10-15", "frames": 2, "start": "2026-10-15T16:46:11", "end": "2026-10-15T16:46:11", "symbols": [], "thumbs": ["docs/thumbs/161-1.jpg", "docs/thumbs/161-2.jpg"], "full": ["archive/2026-10/2026-10-15_1646/01.jpg", "archive/2026-10/2026-10-15_1646/02.jpg"]}, {"date": "2026-10-16", "frames": 5, "start": "2026-10-16T12:06:15", "end": "2026-10-16T20:10:59", "symbols": [], "thumbs": ["docs/thumbs/162.jpg", "docs/thumbs/163.jpg", "docs/thumbs/164.jpg", "docs/thumbs/165.jpg", "docs/thumbs/166.jpg"], "full": ["archive/2026-10/2026-10-16_1206/01.jpg", "archive/2026-10/2026-10-16_1651/01.jpg", "archive/2026-10/2026-10-16_1805/01.jpg", "archive/2026-10/2026-10-16_1813/01.jpg", "archive/2026-10/2026-10-16_2010/01.jpg"]}, {"date": "2026-10-20", "frames": 2, "start": "2026-10-20T18:08:16", "end": "2026-10-20T18:47:31", "symbols": [], "thumbs": ["docs/thumbs/167.jpg", "docs/thumbs/168.jpg"], "full": ["archive/2026-10/2026-10-20_1808/01.jpg", "archive/2026-10/2026-10-20_1847/01.jpg"]}, {"date": "2026-10-22", "frames": 5, "start": "2026-10-22T13:52:09", "end": "2026-10-22T19:12:56", "symbols": [], "thumbs": ["docs/thumbs/169.jpg", "docs/thumbs/170.jpg", "docs/thumbs/171.jpg", "docs/thumbs/172.jpg", "docs/thumbs/173.jpg"], "full": ["archive/2026-10/2026-10-22_1352/01.jpg", "archive/2026-10/2026-10-22_1709/01.jpg", "archive/2026-10/2026-10-22_1715/01.jpg", "archive/2026-10/2026-10-22_1911/01.jpg", "archive/2026-10/2026-10-22_1912/01.jpg"]}, {"date": "2026-10-26", "frames": 2, "start": "2026-10-26T15:31:23", "end": "2026-10-26T15:31:23", "symbols": [], "thumbs": ["docs/thumbs/174-1.jpg", "docs/thumbs/174-2.jpg"], "full": ["archive/2026-10/2026-10-26_1531/01.jpg", "archive/2026-10/2026-10-26_1531/02.jpg"]}];
 
   const months = [...new Set(DATA.map(d => d.month))];
   const sum = arr => arr.reduce((n,d) => n + d.thumbs.length, 0);
-  const chipCount = k => k === 'all' ? sum(DATA) : k === 'featured' ? sum(DATA.filter(d=>d.featured))
-    : k === 'pairs' ? sum(DATA.filter(d=>d.thumbs.length>1)) : sum(DATA.filter(d=>d.month===k));
-  const chips = [['all','All'],['featured','Featured'],['pairs','Before / after'], ...months.map(m => [m, m.replace('-',' / ')])]
+  const multi = SESSIONS.length;
+  const chipCount = k => k === 'sessions' ? multi
+    : k === 'all' ? sum(DATA)
+    : k === 'featured' ? sum(DATA.filter(d=>d.featured))
+    : sum(DATA.filter(d=>d.month===k));
+  const chips = [['sessions','Sessions'],['all','All charts'],['featured','Featured'],
+                 ...months.map(m => [m, m.replace('-',' / ')])]
     .map(([k,l]) => [k, l + '  ' + chipCount(k)]);
+
   chips.forEach(([key,label]) => {
     const b = document.createElement('button');
-    b.className = 'chip' + (key === 'all' ? ' on' : '');
+    b.className = 'chip' + (key === current ? ' on' : '');
     b.textContent = label;
     b.onclick = () => { document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
       b.classList.add('on'); current = key; render(); };
     filters.appendChild(b);
   });
 
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function humanDate(iso){
+    const [y,m,d] = iso.split('-');
+    return (+d) + ' ' + MON[+m - 1] + ' ' + y;
+  }
+
   function render(){
     grid.innerHTML = '';
+    if (current === 'sessions') { renderSessions(); return; }
+    grid.className = 'grid';
     filtered = DATA.filter(d => current === 'all' ? true
-      : current === 'pairs' ? d.thumbs.length > 1
       : current === 'featured' ? d.featured
       : d.month === current);
     shown.textContent = filtered.reduce((n,d) => n + d.thumbs.length, 0);
@@ -185,22 +208,57 @@
       t.innerHTML = '<img loading="lazy" src="' + d.thumbs[0] + '" alt="">' +
         (d.thumbs.length > 1 ? '<span class="pair">PAIR</span>' : '') +
         '<div class="meta"><span>' + d.date + ' · ' + d.time + '</span><span>' + (d.symbol || '') + '</span></div>';
-      t.onclick = () => openLightbox(i);
+      t.onclick = () => openCard(i);
       frag.appendChild(t);
     });
     grid.appendChild(frag);
   }
 
-  function openLightbox(i){
-    lbIndex = i; const d = filtered[i];
-    document.getElementById('lb-cap').innerHTML = d.date + ' ' + d.time + (d.caption ? ' — ' + d.caption : '') +
-      ' · <a href="' + d.full[0] + '" target="_blank" rel="noopener">open full size ↗</a>';
-    document.getElementById('lb-body').innerHTML = d.full.map(s => '<img loading="eager" src="' + s + '" alt="">').join('');
+  function renderSessions(){
+    grid.className = 'grid cases';
+    shown.textContent = SESSIONS.reduce((n,s) => n + s.frames, 0);
+    const frag = document.createDocumentFragment();
+    SESSIONS.forEach((s, idx) => {
+      const el = document.createElement('div');
+      el.className = 'case';
+      const visible = Math.min(s.thumbs.length, 4);
+      const shownImages = s.thumbs.length > 4 ? 3 : s.thumbs.length;
+      const strip = s.thumbs.slice(0, shownImages).map(t => '<img loading="lazy" src="' + t + '" alt="">').join('');
+      const extra = s.thumbs.length > 4 ? '<div class="more">+' + (s.thumbs.length - shownImages) + '</div>' : '';
+      const cols = 'style="grid-template-columns:repeat(' + visible + ',1fr)"';
+      el.innerHTML = '<div class="case-head"><b>' + humanDate(s.date) + '</b><span>' + s.frames +
+        ' frames · ' + s.start.slice(11,16) + ' → ' + s.end.slice(11,16) +
+        (s.symbols.length ? ' · ' + s.symbols.join(', ') : '') + '</span></div>' +
+        '<div class="strip" ' + cols + '>' + strip + extra + '</div>';
+      el.onclick = () => openSession(idx);
+      frag.appendChild(el);
+    });
+    grid.appendChild(frag);
+  }
+
+  function showImages(urls, captionHtml){
+    document.getElementById('lb-cap').innerHTML = captionHtml +
+      ' · <a href="' + urls[0] + '" target="_blank" rel="noopener">open full size ↗</a>';
+    document.getElementById('lb-body').innerHTML = urls.map(u => '<img loading="eager" src="' + u + '" alt="">').join('');
     document.getElementById('lb').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
+
+  function openCard(i){
+    lbIndex = i; const d = filtered[i];
+    showImages(d.full, d.date + ' ' + d.time + (d.caption ? ' — ' + d.caption : ''));
+    lbStep = n => { lbIndex = (lbIndex + n + filtered.length) % filtered.length; openCard(lbIndex); };
+  }
+
+  function openSession(idx){
+    const s = SESSIONS[idx];
+    showImages(s.full, humanDate(s.date) + ' · ' + s.frames + ' frames · ' +
+      s.start.slice(11,16) + ' → ' + s.end.slice(11,16));
+    lbStep = n => { const next = (idx + n + SESSIONS.length) % SESSIONS.length; openSession(next); };
+  }
+
   function close(){ document.getElementById('lb').classList.remove('open'); document.body.style.overflow = ''; }
-  function step(n){ if(!filtered.length) return; lbIndex = (lbIndex + n + filtered.length) % filtered.length; openLightbox(lbIndex); }
+  function step(n){ if (lbStep) lbStep(n); }
 
   document.getElementById('lb-close').onclick = close;
   document.getElementById('lb-prev').onclick = () => step(-1);

@@ -11,9 +11,21 @@
 
 ## [▶ &nbsp; Open the gallery &nbsp; →](https://alirezakkt.github.io/algo-nds-signals/)
 
-<sub>202 charts, filterable by month · before/after pairs highlighted · click any frame to enlarge</sub>
+<sub>202 charts in 50 day-sessions · before/after pairs highlighted · click any frame for full resolution</sub>
 
 </div>
+
+---
+
+## Frames are grouped into sessions
+
+A flat folder of 202 screenshots tells you nothing — the meaning is in the order. So the gallery opens on **Sessions**: every day's posts, threaded together, from the first chart to the outcome.
+
+> **19 Oct 2025 · 7 frames · 09:48 → 23:17** — the chart, the update, the level that broke.
+
+A session splits when two captions name different markets — a BTC chart and a Dow chart posted a minute apart are two stories, not one. `scripts/link_images.py` does that grouping from timestamps and tickers, never from pixel guessing: the charts were re-zoomed and re-tooled across the year, so visual similarity was measured and rejected as unreliable (known same-chart pairs scored anywhere between 0.35 and 0.86 cosine — full overlap with unrelated charts).
+
+Switch to **All charts** for the flat archive.
 
 ---
 
@@ -88,7 +100,7 @@ A system that needs to be right 4 times out of 5 breaks when the market changes 
 | [`INDEX.md`](INDEX.md) | Every screenshot, chronologically |
 | `archive/` | 175 timestamped folders, 202 charts, `meta.json` each |
 | `data/` | `signals.json` · `screenshots.json` |
-| `scripts/` | `build_archive.py` · `make_visuals.py` · `make_site.py` |
+| `scripts/` | `build_archive.py` · `link_images.py` · `make_visuals.py` · `make_site.py` |
 
 Pick any row in [`SIGNALS.md`](SIGNALS.md), take its timestamp, open the matching folder — the chart the engine was looking at is there. No "trust me" required.
 
