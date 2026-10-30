@@ -29,8 +29,6 @@
   .step i{color:var(--cyan);font-style:normal;font-weight:700;font-size:13px;min-width:24px}
   .step b{min-width:104px;font-size:14px;letter-spacing:.04em}
   .step span{color:var(--muted);font-size:14px}
-  .bet{font-size:22px;line-height:1.35;margin:0 0 16px}
-  .bet em{color:var(--amber);font-style:normal;font-weight:700}
   .scroll{overflow-x:auto}
   table{border-collapse:collapse;width:100%;font-size:14px}
   th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -87,7 +85,7 @@
 </header>
 
 <section>
-  <div class="wrap two">
+  <div class="wrap">
     <div>
       <h2>How a signal is built</h2>
       <div class="card steps">
@@ -97,15 +95,6 @@
         <div class="step"><i>04</i><b>TARGET</b><span>next node = TP — structure decides the exit</span></div>
         <div class="step"><i>05</i><b>STOP</b><span>GARCH volatility = SL — measured, not chosen</span></div>
         <div class="step"><i>06</i><b>TRIGGER</b><span>fire inside the retracement zone, depth recorded</span></div>
-      </div>
-    </div>
-    <div>
-      <h2>The consequence</h2>
-      <div class="card">
-        <p class="bet">With <em>3.54R</em> of designed reward per 1R of risk, the system breaks even
-          at a <em>22%</em> hit rate.</p>
-        <p style="color:var(--muted);font-size:14px;margin:0">It does not need to be right most of the
-          time. It needs to survive being wrong — and the payoff geometry is what buys that room.</p>
       </div>
     </div>
   </div>

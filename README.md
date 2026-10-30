@@ -67,22 +67,6 @@ Switch to **All charts** for the flat archive.
 
 ---
 
-## The payoff geometry
-
-Because the target comes from structure and the stop from volatility, **R:R is an output — not a setting**. The 15 documented signals averaged **3.54R**, which puts breakeven at a **22% hit rate**:
-
-| Hit rate | Expectancy | 100 trades |
-|:--|--:|--:|
-| 20% | −0.29R | −29R |
-| **22%** | **0.00R** | **breakeven** |
-| 30% | +0.36R | +36R |
-| 40% | +0.82R | +82R |
-| 45% | +1.04R | +104R |
-
-A system that needs to be right 4 times out of 5 breaks when the market changes character. One that breaks even at 2 out of 9 has room to be wrong — and that room is the whole edge.
-
----
-
 <div align="center">
 
 <img src="docs/rr.svg" width="46%" alt="Designed R:R per signal"> <img src="docs/timeline.svg" width="46%" alt="Posts per month">
