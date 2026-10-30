@@ -1,85 +1,177 @@
-# Algo NDS — Signal Archive
+<div align="center">
 
-One year of an NDS-based trading engine, documented frame by frame.
+![Algo NDS — precision entries from nodal structure](docs/hero.png)
 
-**202 annotated charts · 175 timestamped posts · 15 fully structured signals · Sep 2025 → Oct 2026.**
+**A node-based engine for reading price — 202 charts, 15 structured signals, and the full reasoning behind every one of them.**
 
-This repository is the evidence trail behind a math-first approach to price: instead of drawing trendlines by eye, nodes are computed, a sequence is framed, and the next node becomes the target. The screenshots are the working record — every chart, in the order it was posted, with the original date and time attached.
+![charts](https://img.shields.io/badge/charts-202-22d3ee?style=flat-square)
+![signals](https://img.shields.io/badge/structured_signals-15-22d3ee?style=flat-square)
+![rr](https://img.shields.io/badge/avg_design_R:R-3.54-f5c518?style=flat-square)
+![period](https://img.shields.io/badge/record-2025--09_→_2026--10-8a96a8?style=flat-square)
+
+[**The report**](REPORT.md) · [**The signals**](SIGNALS.md) · [**The archive**](INDEX.md) · [**Highlights**](HIGHLIGHTS.md)
+
+</div>
 
 ---
 
-## What's in here
+## The idea in thirty seconds
+
+Most chart reading starts with a shape — a triangle, a flag, a head and shoulders — and then argues about it.
+
+This starts with **numbers**. Swing points are located by computing derivatives of price and taking the second derivative for precision, not by eyeballing peaks. Those points become **nodes**. The nodes form a **sequence**. And once the sequence is framed, the next node is no longer a guess: it is a computation, and it becomes the target.
+
+That single shift is the whole method:
+
+> **The target is not where you hope price goes. It is where the structure says the next node sits.**
+
+Everything in this repository is that claim, applied — 202 charts across crypto, indices, gold and FX, with the engine's read printed on the chart at the moment it was made.
+
+---
+
+## How a signal is built
+
+```
+1. NODES      find swing points via derivatives (second derivative for precision)
+2. SEQUENCE   frame the nodes into a leg structure — which displacement is in play
+3. SYMMETRY   project the geometry forward: where the next leg should land
+4. TARGET     the next node = TP. Structure decides the exit, not a fixed multiple
+5. STOP       GARCH volatility estimate = SL. Volatility decides the room, not preference
+6. TRIGGER    fire only inside the retracement zone, with the depth recorded
+```
+
+Steps 4 and 5 are what make the output usable. Because the target comes from structure and the stop comes from measured volatility, **R:R is an output of the setup rather than an input you force**. The engine never says "go for 1:2". It reads what the market offers and reports the ratio it actually got.
+
+---
+
+## Why 3.54R changes the game
+
+The 15 documented signals average **3.54R of designed reward per 1R of risk**. That number is not a result — it is the geometry the engine produced. But it has a consequence that most trading systems cannot claim:
+
+**Breakeven is 22%.**
+
+| Hit rate | Expectancy per trade | 100 trades |
+| --- | --- | --- |
+| 20% | −0.29R | −29R |
+| **22%** | **0.00R** | **0R — breakeven** |
+| 25% | +0.14R | +14R |
+| 30% | +0.36R | +36R |
+| 35% | +0.59R | +59R |
+| 40% | +0.82R | +82R |
+| 45% | +1.04R | +104R |
+
+*Expectancy = p × 3.54 − (1 − p) × 1, computed from the average R:R in [`data/signals.json`](data/signals.json).*
+
+A method that needs to be right **4 times out of 5** is a method that will break the first time the market changes character. A method that breaks even at **2 out of 9** has room to be wrong — which, over a few hundred trades, is the only thing that matters.
+
+That is the actual claim of this work: not that it wins every time, but that **the structure of the payoff survives being wrong most of the time.**
+
+---
+
+## The evidence
+
+<div align="center">
+
+<img src="docs/rr.svg" width="88%" alt="Designed R:R per signal">
+
+<img src="docs/timeline.svg" width="88%" alt="Posts per month">
+
+</div>
+
+| What the record shows | |
+| --- | --- |
+| Annotated charts archived | **202** |
+| Timestamped posts | **175** (Sep 2025 → Oct 2026) |
+| Machine-readable signals | **15** (13–22 Dec 2025) |
+| Symbols | XRP · DOGE · LTC · SOL · ETH · BTC · INJ · NEAR |
+| Direction split | 6 long / 9 short |
+| Average designed R:R | **3.54** (range 2.67 – 6.86) |
+| Markets covered over the year | crypto, indices (US30/Dow), gold, FX, equities |
+
+Every one of the 15 signals carries the reason it fired, in the same format:
+
+```
+🎯 NDS SIGNAL
+💎 XRP/USDT
+🔴 Side: SELL
+🚪 Entry: 1.9183     🎯 TP: 1.9056
+🛑 SL: 1.9229        ⚖️ R:R: 2.77
+🧠 Reason: Zone 0.8-0.92 | Ret: 90.1%
+```
+
+Read the full table in [`SIGNALS.md`](SIGNALS.md).
+
+---
+
+## The archive is timestamped on purpose
+
+Anyone can post their winners. The reason this record is worth reading is that it is **complete for the period it covers** — every chart the engine produced, in the order it produced them, including the ones that went nowhere.
+
+Each folder carries the original post time:
+
+```
+archive/2025-12/2025-12-21_1454/
+├── 01.jpg      ← the chart as posted, 21 Dec 2025 at 14:54
+└── meta.json   ← timestamp, message id, verbatim caption
+```
+
+That is what makes the 15 signals auditable: pick one from [`SIGNALS.md`](SIGNALS.md), take its timestamp, open the matching folder, and check the chart the engine was looking at when it fired. No "trust me" required — the receipts are in the repository.
+
+---
+
+## Inside the repository
 
 | Path | What it is |
 | --- | --- |
-| [`REPORT.md`](REPORT.md) | The full report: system, method, coverage, numbers, limitations |
-| [`SIGNALS.md`](SIGNALS.md) | The 15 machine-readable signals, exactly as the engine posted them |
-| [`INDEX.md`](INDEX.md) | Every screenshot in chronological order |
-| [`HIGHLIGHTS.md`](HIGHLIGHTS.md) | A short walk-through of the system end to end |
-| `archive/YYYY-MM/<date>_<time>/` | The screenshots themselves, one folder per post, with `meta.json` |
-| `data/screenshots.json` | Machine-readable archive index |
-| `data/signals.json` | Machine-readable signal log |
-| `scripts/build_archive.py` | Rebuilds everything from a Telegram JSON export |
+| [`REPORT.md`](REPORT.md) | Full report: method, timeline, coverage, numbers, limitations |
+| [`SIGNALS.md`](SIGNALS.md) | All 15 signals, exactly as posted |
+| [`INDEX.md`](INDEX.md) | Every screenshot, chronologically, with links |
+| [`HIGHLIGHTS.md`](HIGHLIGHTS.md) | A short walk-through of the system |
+| `archive/` | 175 timestamped folders, 202 charts, with `meta.json` each |
+| `data/` | `signals.json` · `screenshots.json` — machine readable |
+| `scripts/` | `build_archive.py` (ingest an export) · `make_visuals.py` (rebuild these graphics) |
+| `docs/` | The graphics in this README |
 
 ---
 
-## The engine, in one screen
+## What this repository does **not** claim
 
-The panel that appears across the archive reads:
+Being explicit here is what separates a track record from marketing:
 
-| Field | What it means |
-| --- | --- |
-| **PRICE** | Current price at the moment of the snapshot |
-| **PREDICTION** | The projected next-node value — the target the sequence implies |
-| **FRACTAL** | Fractal pressure across timeframes, collapsed into one number |
-| **ENTRY / TP / SL** | Levels drawn on the chart, with TP set at the next node |
-| **HOOK+ / HOOK−** | Directional hooks — where the sequence flips |
+- **No win rate.** The source export contains no outcome field. Not one of the 15 signals has a recorded exit. The 3.54R is *designed* reward-to-risk, not realised profit.
+- **No PnL, no equity curve, no "verified" badge** — because nobody has verified it, including me.
+- **Hindsight is present.** Charts were annotated live, but they are still selected posts from a public channel.
+- **Coverage has gaps.** Four months of the period have no posts at all.
 
-Two design choices are visible in the posts and worth calling out, because they are what separates this from discretionary chart markup:
-
-- **TP comes from structure, not from a fixed R.** The target is the next node in the sequence (posted 2025‑12‑21: *"TPs are calculated based on the next node"*).
-- **SL comes from volatility, not from a round number.** Stops are sized with a GARCH-based volatility estimate (same post), which is why the R:R varies per signal instead of being pinned to 1:2 or 1:3.
+What is claimed is narrower and stronger: **the method is documented, the numbers are traceable, and the reasoning is reproducible.** If a result set is ever attached to it, the structure to check it is already here.
 
 ---
 
-## The signals
+## What would turn this into a verified track record
 
-The engine posted 15 fully structured signals between **2025‑12‑15** and **2025‑12‑22** — symbol, side, entry, TP, SL, R:R and the reason string, all machine-readable in [`SIGNALS.md`](SIGNALS.md).
+1. **An outcome ledger** — `signal_id, posted_at, entry, tp, sl, closed_at, exit, outcome, R` for every trade, including the losers.
+2. **Forward test** — run the engine on unseen data for a fixed period, publish everything, edit nothing.
+3. **Broker statement** — for any live period, the only artifact that cannot be curated.
 
-| Metric | Value |
-| --- | --- |
-| Signals | 15 |
-| Symbols | XRP, DOGE, LTC, SOL, ETH, BTC, INJ, NEAR |
-| Long / short | 6 / 9 |
-| Average R:R | **3.54** |
-| R:R range | 2.67 → 6.86 |
-
-The reason string on each signal names the zone and the retracement depth it fired on (`Zone 0.8‑0.92 | Ret: 90.1%`), which is what makes the set auditable later: you can re-check any of them against the chart without guessing what triggered it.
-
-**What is not claimed:** the export contains no outcome field. There is no win rate, no PnL curve, no "TP hit" flag attached to these 15 entries. The archive shows what the engine produced and when — not that it was profitable. Anyone quoting a win rate from this repo would be inventing it.
+The archive is the raw material for (1): timestamps and trigger reasons are already recorded.
 
 ---
 
-## Why the archive is timestamped
-
-Selection bias is the quiet killer of every trading track record: you keep the winners, delete the losers, and the screenshots stop meaning anything.
-
-Every folder here carries the original post time, and the archive is complete for the period it covers — the charts that went nowhere are in it too. That is the only reason the numbers above can be trusted as *counts* rather than as *results*.
-
----
-
-## Rebuilding / extending
+## Reproduce it
 
 ```bash
-python3 scripts/build_archive.py "/path/to/DataExport_YYYY-MM-DD"
+python3 scripts/build_archive.py "/path/to/DataExport_YYYY-MM-DD"   # rebuild archive + data
+python3 scripts/make_visuals.py                                     # rebuild docs/ graphics
 ```
 
-The script reads Telegram's `result.json`, groups photos posted in the same minute (a before/after pair is usually one post, two images), and regenerates `archive/`, `data/`, `INDEX.md`, `SIGNALS.md`. Nothing is inferred: pair, timeframe and outcome are left `null` unless the export actually contains them.
+Both scripts are pure Python + Pillow, no external services.
 
 ---
 
-## Disclaimer
+<div align="center">
 
-Educational material, not financial advice, not a signal service. All annotations were made on TradingView in real time or shortly after; hindsight is unavoidable in any retrospective chart. Nothing here is a recommendation to buy or sell any asset. Trade your own risk.
+**Educational research. Not financial advice. Not a signal service.**
 
-© AliReza V. Charts: TradingView.
+*Charts: TradingView · Annotations and engine: AliReza V.*
+
+</div>

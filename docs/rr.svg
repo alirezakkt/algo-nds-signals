@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="704" viewBox="0 0 1000 704" font-family="Helvetica,Arial,sans-serif">
+<rect width="1000" height="704" fill="#0b0e14"/>
+<text x="24" y="38" fill="#e8eef5" font-size="20" font-weight="bold">Designed R:R per signal</text>
+<text x="24" y="60" fill="#8a96a8" font-size="13">13–22 Dec 2025 · target at the next node · stop at GARCH volatility</text>
+<text x="24" y="92" fill="#c7d2e0" font-size="13">BTC/USDT · SELL</text>
+<rect x="190" y="74" width="280.2" height="26" rx="4" fill="#f5c518" opacity="0.9"/>
+<text x="480.2" y="92" fill="#e8eef5" font-size="13" font-weight="bold">2.67</text>
+<text x="24" y="130" fill="#c7d2e0" font-size="13">DOGE/USDT · SELL</text>
+<rect x="190" y="112" width="285.5" height="26" rx="4" fill="#f5c518" opacity="0.9"/>
+<text x="485.5" y="130" fill="#e8eef5" font-size="13" font-weight="bold">2.72</text>
+<text x="24" y="168" fill="#c7d2e0" font-size="13">SOL/USDT · SELL</text>
+<rect x="190" y="150" width="287.6" height="26" rx="4" fill="#f5c518" opacity="0.9"/>
+<text x="487.6" y="168" fill="#e8eef5" font-size="13" font-weight="bold">2.74</text>
+<text x="24" y="206" fill="#c7d2e0" font-size="13">XRP/USDT · SELL</text>
+<rect x="190" y="188" width="290.7" height="26" rx="4" fill="#f5c518" opacity="0.9"/>
+<text x="490.7" y="206" fill="#e8eef5" font-size="13" font-weight="bold">2.77</text>
+<text x="24" y="244" fill="#c7d2e0" font-size="13">XRP/USDT · BUY</text>
+<rect x="190" y="226" width="294.9" height="26" rx="4" fill="#22d3ee" opacity="0.9"/>
+<text x="494.9" y="244" fill="#e8eef5" font-size="13" font-weight="bold">2.81</text>
+<text x="24" y="282" fill="#c7d2e0" font-size="13">NEAR/USDT · BUY</text>
+<rect x="190" y="264" width="313.8" height="26" rx="4" fill="#22d3ee" opacity="0.9"/>
+<text x="513.8" y="282" fill="#e8eef5" font-size="13" font-weight="bold">2.99</text>
+<text x="24" y="320" fill="#c7d2e0" font-size="13">DOGE/USDT · SELL</text>
+<rect x="190" y="302" width="314.9" height="26" rx="4" fill="#f5c518" opacity="0.9"/>
+<text x="514.9" y="320" fill="#e8eef5" font-size="13" font-weight="bold">3.00</text>
+<text x="24" y="358" fill="#c7d2e0" font-size="13">XRP/USDT · BUY</text>
+<rect x="190" y="340" width="318.0" height="26" rx="4" fill="#22d3ee" opacity="0.9"/>
+<text x="518.0" y="358" fill="#e8eef5" font-size="13" font-weight="bold">3.03</text>
+<text x="24" y="396" fill="#c7d2e0" font-size="13">LTC/USDT · SELL</text>
+<rect x="190" y="378" width="323.3" height="26" rx="4" fill="#f5c518" opacity="0.9"/>
+<text x="523.3" y="396" fill="#e8eef5" font-size="13" font-weight="bold">3.08</text>
+<text x="24" y="434" fill="#c7d2e0" font-size="13">LTC/USDT · BUY</text>
+<rect x="190" y="416" width="324.3" height="26" rx="4" fill="#22d3ee" opacity="0.9"/>
+<text x="524.3" y="434" fill="#e8eef5" font-size="13" font-weight="bold">3.09</text>
+<text x="24" y="472" fill="#c7d2e0" font-size="13">ETH/USDT · SELL</text>
+<rect x="190" y="454" width="366.3" height="26" rx="4" fill="#f5c518" opacity="0.9"/>
+<text x="566.3" y="472" fill="#e8eef5" font-size="13" font-weight="bold">3.49</text>
+<text x="24" y="510" fill="#c7d2e0" font-size="13">ETH/USDT · BUY</text>
+<rect x="190" y="492" width="372.6" height="26" rx="4" fill="#22d3ee" opacity="0.9"/>
+<text x="572.6" y="510" fill="#e8eef5" font-size="13" font-weight="bold">3.55</text>
+<text x="24" y="548" fill="#c7d2e0" font-size="13">DOGE/USDT · SELL</text>
+<rect x="190" y="530" width="471.3" height="26" rx="4" fill="#f5c518" opacity="0.9"/>
+<text x="671.3" y="548" fill="#e8eef5" font-size="13" font-weight="bold">4.49</text>
+<text x="24" y="586" fill="#c7d2e0" font-size="13">SOL/USDT · SELL</text>
+<rect x="190" y="568" width="605.6" height="26" rx="4" fill="#f5c518" opacity="0.9"/>
+<text x="805.6" y="586" fill="#e8eef5" font-size="13" font-weight="bold">5.77</text>
+<text x="24" y="624" fill="#c7d2e0" font-size="13">INJ/USDT · BUY</text>
+<rect x="190" y="606" width="720.0" height="26" rx="4" fill="#22d3ee" opacity="0.9"/>
+<text x="920.0" y="624" fill="#e8eef5" font-size="13" font-weight="bold">6.86</text>
+<line x1="561.3" y1="66" x2="561.3" y2="664" stroke="#8a96a8" stroke-dasharray="4 4"/>
+<text x="567.3" y="682" fill="#8a96a8" font-size="12">avg 3.54R</text>
+</svg>
